@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button"
 import { ArrowRight, Star, ShoppingBag, ShieldCheck, Clock, MapPin, Search } from "lucide-react"
 import { Link } from "react-router-dom"
 import { Card, CardContent } from "@/components/ui/card"
+import { toast } from "sonner"
 import {
   Carousel,
   CarouselContent,
@@ -40,6 +41,23 @@ export default function HomePage() {
     return () => clearInterval(timer)
   }, [])
 
+  const handleShare = async () => {
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: language === 'ar' ? 'مؤسسة الفيصلية' : 'Al-Faisaliah Store',
+          text: language === 'ar' ? 'اكتشف منتجاتنا الفاخرة!' : 'Check out our premium products!',
+          url: window.location.origin,
+        });
+      } else {
+        await navigator.clipboard.writeText(window.location.origin);
+        toast.success(language === 'ar' ? 'تم نسخ الرابط بنجاح' : 'Link copied to clipboard!');
+      }
+    } catch (error) {
+      console.error('Error sharing:', error);
+    }
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
       {/* Floating Action Buttons */}
@@ -55,7 +73,10 @@ export default function HomePage() {
             <div className="absolute -right-1 -top-1 w-2 h-2 bg-white rounded-full"></div>
           </div>
         </a>
-        <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center shadow-lg shadow-primary/20 border-2 border-white/20 hover:scale-110 transition-transform cursor-pointer">
+        <div 
+          onClick={handleShare}
+          className="w-12 h-12 bg-primary rounded-full flex items-center justify-center shadow-lg shadow-primary/20 border-2 border-white/20 hover:scale-110 transition-transform cursor-pointer"
+        >
           <span className="text-black font-black text-xl leading-none">?</span>
         </div>
       </div>

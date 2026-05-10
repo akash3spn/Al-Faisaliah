@@ -19,7 +19,7 @@ export default function ProductsPage() {
       try {
         const q = query(collection(db, "products"))
         const querySnapshot = await getDocs(q)
-        let items = querySnapshot.docs.map(doc => ({
+        let items: any[] = querySnapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data()
         }))

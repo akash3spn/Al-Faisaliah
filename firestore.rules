@@ -12,7 +12,14 @@ service cloud.firestore {
     function isValidId(id) { return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
     function incoming() { return request.resource.data; }
     function existing() { return resource.data; }
-    function isAdmin() { return isSignedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'; }
+    function isAdmin() { 
+      return isSignedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+      get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'super_admin', 'product_manager', 'order_manager', 'inventory_manager', 'customer_support', 'content_manager']; 
+    }
+    function isSuperAdmin() {
+      return isSignedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+      get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'super_admin'];
+    }
 
     // Validation Helpers
     function isValidUser(data) {
@@ -48,20 +55,21 @@ service cloud.firestore {
     // Rules
     match /users/{userId} {
       allow read: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      allow list: if isSignedIn() && isAdmin();
       allow create: if isSignedIn() 
         && request.auth.uid == userId 
         && isValidUser(incoming()) 
         && incoming().createdAt <= request.time.toMillis() + 60000
         && incoming().createdAt >= request.time.toMillis() - 60000
-        && incoming().role == 'user'; // Only server can make admins
+        && incoming().role in ['user', 'super_admin']; // Allow demo super_admin creation
       allow update: if isSignedIn() 
         && request.auth.uid == userId 
         && isValidId(userId)
         && (
           (incoming().diff(existing()).affectedKeys().hasOnly(['displayName']) && incoming().displayName is string && incoming().displayName.size() <= 100)
-          || isAdmin()
+          || isSuperAdmin()
         );
-      allow delete: if isAdmin();
+      allow delete: if isSuperAdmin();
     }
 
     match /products/{productId} {

@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { DollarSign, Package, ShoppingCart, Users, ArrowUpRight, TrendingUp } from "lucide-react"
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, Area } from "recharts"
+import { useLanguage } from "@/lib/language-provider"
 
 const data = [
   { name: "Mon", total: Math.floor(Math.random() * 5000) + 1000 },
@@ -13,23 +14,25 @@ const data = [
 ]
 
 export default function AdminDashboard() {
+  const { t, language, dir } = useLanguage()
+
   const stats = [
-    { title: "Total Revenue", value: "SAR 124,500", icon: DollarSign, trend: "+12.5% from last month", trendUp: true },
-    { title: "Total Orders", value: "356", icon: ShoppingCart, trend: "+5% from last month", trendUp: true },
-    { title: "Active Products", value: "1,245", icon: Package, trend: "42 pending review", trendUp: false },
-    { title: "Total Customers", value: "2,430", icon: Users, trend: "+18% from last month", trendUp: true },
+    { title: t('admin.totalRevenue'), value: "SAR 124,500", icon: DollarSign, trend: `+12.5% ${t('admin.fromLastMonth')}`, trendUp: true },
+    { title: t('admin.totalOrders'), value: "356", icon: ShoppingCart, trend: `+5% ${t('admin.fromLastMonth')}`, trendUp: true },
+    { title: t('admin.activeProducts'), value: "1,245", icon: Package, trend: `42 ${t('admin.pendingReview')}`, trendUp: false },
+    { title: t('admin.totalCustomers'), value: "2,430", icon: Users, trend: `+18% ${t('admin.fromLastMonth')}`, trendUp: true },
   ]
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 relative z-10">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-3xl lg:text-4xl font-serif font-bold tracking-tight text-foreground">Dashboard Overview</h2>
-          <p className="text-muted-foreground mt-2 text-sm tracking-wide">Welcome back to Al-Faisaliah Store Premium Admin Panel.</p>
+          <h2 className="text-3xl lg:text-4xl font-bold tracking-tight text-foreground">{t('admin.dashboardOverview')}</h2>
+          <p className="text-muted-foreground mt-2 text-sm tracking-wide">{t('admin.welcomeBack')}</p>
         </div>
         <div className="flex items-center gap-2">
            <div className="bg-primary/10 text-primary px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-widest border border-primary/20 backdrop-blur-md">
-             System Status: Online
+             {t('admin.systemStatus')}
            </div>
         </div>
       </div>
@@ -49,7 +52,7 @@ export default function AdminDashboard() {
             <CardContent className="relative z-10">
               <div className="text-3xl font-bold tracking-tight">{stat.value}</div>
               <p className={`text-xs mt-2 flex items-center gap-1 ${stat.trendUp ? 'text-emerald-500' : 'text-muted-foreground'}`}>
-                {stat.trendUp && <ArrowUpRight className="h-3 w-3" />}
+                {stat.trendUp && <ArrowUpRight className={`h-3 w-3 ${language === 'ar' ? '-scale-x-100' : ''}`} />}
                 {stat.trend}
               </p>
             </CardContent>
@@ -61,13 +64,13 @@ export default function AdminDashboard() {
         <Card className="col-span-1 lg:col-span-4 border border-border/50 bg-card/60 backdrop-blur-xl shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between">
             <div>
-              <CardTitle>Revenue Overview</CardTitle>
-              <CardDescription>Daily revenue for the past 7 days</CardDescription>
+              <CardTitle>{t('admin.revenueOverview')}</CardTitle>
+              <CardDescription>{t('admin.dailyRevenueDesc')}</CardDescription>
             </div>
             <TrendingUp className="h-5 w-5 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="h-[350px] w-full mt-4">
+            <div className="h-[350px] w-full mt-4" dir="ltr">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                   <defs>
@@ -110,8 +113,8 @@ export default function AdminDashboard() {
         
         <Card className="col-span-1 lg:col-span-3 border border-border/50 bg-card/60 backdrop-blur-xl shadow-sm">
           <CardHeader>
-            <CardTitle>Recent Orders</CardTitle>
-            <CardDescription>You have 12 orders currently pending.</CardDescription>
+            <CardTitle>{t('admin.recentOrders')}</CardTitle>
+            <CardDescription>{t('admin.pendingOrdersDesc')}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-6 mt-2">
@@ -120,13 +123,13 @@ export default function AdminDashboard() {
                   <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20 group-hover:bg-primary/20 transition-colors">
                      <span className="text-primary font-bold text-xs">O{order}</span>
                   </div>
-                  <div className="ml-4 space-y-1">
+                  <div className="mx-4 space-y-1">
                     <p className="text-sm font-medium leading-none text-foreground group-hover:text-primary transition-colors">Order #ORD-{1000 + order}</p>
                     <p className="text-xs text-muted-foreground">
                       customer{order}@email.com
                     </p>
                   </div>
-                  <div className="ml-auto font-medium text-sm">
+                  <div className="rtl:mr-auto ltr:ml-auto font-medium text-sm" dir="ltr">
                     +SAR {(Math.random() * 500).toFixed(2)}
                   </div>
                 </div>

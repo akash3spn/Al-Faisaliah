@@ -209,9 +209,21 @@ export default function AdminOrders() {
                                 
                                 <div>
                                   <h4 className="text-sm font-semibold mb-2 text-primary">{language === 'ar' ? 'الدفع' : 'Payment'}</h4>
-                                  <div className="bg-muted/10 p-3 rounded-lg border border-border/50 text-sm flex justify-between items-center">
-                                    <span className="uppercase font-bold tracking-widest text-xs">{order.paymentMethod || 'cod'}</span>
-                                    <span className="font-bold text-lg text-primary">SAR {Number(order.total || 0).toFixed(2)}</span>
+                                  <div className="bg-muted/10 p-3 rounded-lg border border-border/50 text-sm space-y-2">
+                                    <div className="flex justify-between items-center">
+                                      <span className="uppercase font-bold tracking-widest text-xs">{language === 'ar' ? 'طريقة الدفع' : 'Method'}: {order.paymentMethod || 'cod'}</span>
+                                      <span className="text-muted-foreground">{language === 'ar' ? 'المجموع الفرعي' : 'Subtotal'}: SAR {Number(order.subtotal || order.total || 0).toFixed(2)}</span>
+                                    </div>
+                                    {order.discountAmount > 0 && (
+                                      <div className="flex justify-between items-center text-primary text-xs">
+                                        <span>{language === 'ar' ? 'الخصم' : 'Discount'} ({order.discountCode})</span>
+                                        <span>- SAR {Number(order.discountAmount).toFixed(2)}</span>
+                                      </div>
+                                    )}
+                                    <div className="flex justify-between items-center pt-2 border-t border-border/50">
+                                      <span className="font-bold">{language === 'ar' ? 'الإجمالي' : 'Total'}</span>
+                                      <span className="font-bold text-lg text-primary">SAR {Number(order.total || 0).toFixed(2)}</span>
+                                    </div>
                                   </div>
                                 </div>
                               </div>

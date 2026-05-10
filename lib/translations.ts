@@ -39,6 +39,7 @@ export const translations = {
     },
     admin: {
       dashboard: "Dashboard",
+      discounts: "Discounts",
       products: "Products",
       orders: "Orders",
       customers: "Customers",
@@ -117,6 +118,7 @@ export const translations = {
     },
     admin: {
       dashboard: "لوحة التحكم",
+      discounts: "كوبونات الخصم",
       products: "المنتجات",
       orders: "الطلبات",
       customers: "العملاء",

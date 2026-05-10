@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { ShoppingBag, Users, PackageOpen, TrendingUp, Settings, Logs, Sidebar, CreditCard, ShieldAlert, LogOut } from "lucide-react"
+import { ShoppingBag, Users, PackageOpen, TrendingUp, Settings, Logs, Sidebar, CreditCard, ShieldAlert, LogOut, Ticket } from "lucide-react"
 import { Link, Outlet, useLocation, Navigate } from "react-router-dom"
 import { useAuth } from "@/lib/firebase/AuthContext"
 import { ModeToggle } from "@/components/mode-toggle"
@@ -21,6 +21,7 @@ export function AdminLayout() {
 
   const allNavItems = [
     { name: t('admin.dashboard'), path: "/admin", icon: TrendingUp, roles: ['super_admin', 'admin', 'product_manager', 'order_manager', 'inventory_manager', 'customer_support', 'content_manager'] },
+    { name: t('admin.discounts'), path: "/admin/discounts", icon: Ticket, roles: ['super_admin', 'admin', 'product_manager'] },
     { name: t('admin.products'), path: "/admin/products", icon: PackageOpen, roles: ['super_admin', 'admin', 'product_manager', 'inventory_manager', 'content_manager'] },
     { name: t('admin.orders'), path: "/admin/orders", icon: ShoppingBag, roles: ['super_admin', 'admin', 'order_manager', 'customer_support'] },
     { name: t('admin.customers'), path: "/admin/customers", icon: Users, roles: ['super_admin', 'admin', 'customer_support'] },

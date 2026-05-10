@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { ArrowRight, CreditCard, Wallet, MapPin, Map, Navigation, Phone, User as UserIcon, Building2 } from "lucide-react";
-import { addDoc, collection } from "firebase/firestore";
+import { ArrowRight, CreditCard, Wallet, MapPin, Map, Navigation, Phone, User as UserIcon, Building2, Tag } from "lucide-react";
+import { addDoc, collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase/client";
 
 export default function CheckoutPage() {
@@ -17,6 +17,9 @@ export default function CheckoutPage() {
   const navigate = useNavigate();
   const { language } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
+  const [discountCodeInput, setDiscountCodeInput] = useState("");
+  const [appliedDiscount, setAppliedDiscount] = useState<{code: string, type: string, value: number} | null>(null);
+  const [validatingDiscount, setValidatingDiscount] = useState(false);
 
   const [formData, setFormData] = useState({
     fullName: user?.displayName || "",
@@ -49,6 +52,55 @@ export default function CheckoutPage() {
     setFormData({ ...formData, paymentMethod: method });
   };
 
+  const calculateDiscountAmount = () => {
+    if (!appliedDiscount) return 0;
+    if (appliedDiscount.type === "percentage") {
+      return cartTotal * (appliedDiscount.value / 100);
+    }
+    return Math.min(appliedDiscount.value, cartTotal);
+  };
+
+  const discountAmount = calculateDiscountAmount();
+  const finalTotal = cartTotal - discountAmount;
+
+  const handleApplyDiscount = async () => {
+    if (!discountCodeInput.trim()) return;
+    
+    setValidatingDiscount(true);
+    try {
+      const q = query(collection(db, "discount_codes"), where("code", "==", discountCodeInput.toUpperCase().trim()));
+      const querySnapshot = await getDocs(q);
+      
+      if (querySnapshot.empty) {
+        toast.error(language === 'ar' ? 'كوبون الخصم غير صحيح' : 'Invalid discount code');
+        setAppliedDiscount(null);
+      } else {
+        const docData = querySnapshot.docs[0].data();
+        if (docData.active) {
+          setAppliedDiscount({
+            code: docData.code,
+            type: docData.type,
+            value: docData.value
+          });
+          toast.success(language === 'ar' ? 'تم تطبيق الخصم' : 'Discount applied successfully');
+        } else {
+          toast.error(language === 'ar' ? 'كوبون الخصم غير فعال' : 'Discount code is inactive');
+          setAppliedDiscount(null);
+        }
+      }
+    } catch (error) {
+      console.error("Error applying discount", error);
+      toast.error(language === 'ar' ? 'حدث خطأ أثناء تطبيق الخصم' : 'Error applying discount');
+    } finally {
+      setValidatingDiscount(false);
+    }
+  };
+
+  const handleRemoveDiscount = () => {
+    setAppliedDiscount(null);
+    setDiscountCodeInput("");
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -76,7 +128,10 @@ export default function CheckoutPage() {
         notes: formData.notes,
         paymentMethod: formData.paymentMethod,
         items: cart,
-        total: cartTotal,
+        subtotal: cartTotal,
+        discountAmount: discountAmount,
+        discountCode: appliedDiscount?.code || null,
+        total: finalTotal,
         status: "pending",
         createdAt: Date.now(),
       };
@@ -215,14 +270,51 @@ export default function CheckoutPage() {
                   <span className="text-muted-foreground">{language === 'ar' ? 'المجموع الفرعي' : 'Subtotal'}</span>
                   <span className="font-medium">SAR {Number(cartTotal || 0).toFixed(2)}</span>
                 </div>
+                {appliedDiscount && (
+                  <div className="flex justify-between text-primary">
+                    <span>{language === 'ar' ? 'الخصم' : 'Discount'} ({appliedDiscount.code})</span>
+                    <span className="font-medium">- SAR {Number(discountAmount || 0).toFixed(2)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">{language === 'ar' ? 'الشحن' : 'Shipping'}</span>
                   <span className="font-medium text-emerald-500">{language === 'ar' ? 'مجاني' : 'Free'}</span>
                 </div>
                 <div className="border-t border-border pt-4 flex justify-between">
                   <span className="font-bold text-lg">{language === 'ar' ? 'الإجمالي' : 'Total'}</span>
-                  <span className="font-bold text-lg text-primary">SAR {Number(cartTotal || 0).toFixed(2)}</span>
+                  <span className="font-bold text-lg text-primary">SAR {Number(finalTotal || 0).toFixed(2)}</span>
                 </div>
+              </div>
+
+              <div className="mb-6 space-y-3">
+                <label className="text-sm font-medium text-muted-foreground">{language === 'ar' ? 'كوبون الخصم' : 'Discount Code'}</label>
+                {appliedDiscount ? (
+                  <div className="flex items-center justify-between bg-primary/10 border border-primary/20 rounded-md p-3">
+                    <div className="flex items-center gap-2 text-primary font-bold">
+                      <Tag className="h-4 w-4" />
+                      <span>{appliedDiscount.code}</span>
+                    </div>
+                    <Button variant="ghost" size="sm" onClick={handleRemoveDiscount} className="text-destructive h-auto py-1">
+                      {language === 'ar' ? 'إزالة' : 'Remove'}
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="flex gap-2">
+                    <Input 
+                      value={discountCodeInput}
+                      onChange={(e) => setDiscountCodeInput(e.target.value)}
+                      placeholder={language === 'ar' ? 'أدخل الكود هنا' : 'Enter code here'}
+                      className="uppercase"
+                    />
+                    <Button type="button" variant="outline" onClick={handleApplyDiscount} disabled={validatingDiscount || !discountCodeInput}>
+                      {validatingDiscount ? (
+                        <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                      ) : (
+                        language === 'ar' ? 'تطبيق' : 'Apply'
+                      )}
+                    </Button>
+                  </div>
+                )}
               </div>
 
               <Button type="submit" disabled={isLoading} className="w-full font-bold uppercase tracking-widest py-6">

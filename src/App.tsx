@@ -14,8 +14,10 @@ import CheckoutPage from "./pages/store/CheckoutPage"
 import LoginPage from "./pages/store/LoginPage"
 import RegisterPage from "./pages/store/RegisterPage"
 import ForgotPasswordPage from "./pages/store/ForgotPasswordPage"
+import ProfilePage from "./pages/store/ProfilePage"
 import MyOrdersPage from "./pages/store/MyOrdersPage"
 import PrivacyPolicyPage from "./pages/store/PrivacyPolicyPage"
+import TermsOfServicePage from "./pages/store/TermsOfServicePage"
 // import ProductDetailPage from "./pages/store/ProductDetailPage"
 
 // Admin Pages
@@ -23,6 +25,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard"
 import AdminProducts from "./pages/admin/AdminProducts"
 import AdminOrders from "./pages/admin/AdminOrders"
 import AdminCustomers from "./pages/admin/AdminCustomers"
+import AdminDiscounts from "./pages/admin/AdminDiscounts"
 import AdminPayments from "./pages/admin/AdminPayments"
 import AdminLogin from "./pages/admin/AdminLogin"
 import AdminManagers from "./pages/admin/AdminManagers"
@@ -51,8 +54,10 @@ export default function App() {
                  <Route path="/categories/:slug" element={<ProductsPage />} />
                  <Route path="/cart" element={<CartPage />} />
                  <Route path="/checkout" element={<CheckoutPage />} />
+                 <Route path="/profile" element={<ProfilePage />} />
                  <Route path="/my-orders" element={<MyOrdersPage />} />
                  <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+                 <Route path="/terms-of-service" element={<TermsOfServicePage />} />
                  {/* <Route path="/products/:id" element={<ProductDetailPage />} /> */}
               </Route>
 
@@ -63,6 +68,7 @@ export default function App() {
               <Route path="products" element={<AdminProducts />} />
               <Route path="orders" element={<AdminOrders />} />
               <Route path="customers" element={<AdminCustomers />} />
+              <Route path="discounts" element={<AdminDiscounts />} />
               <Route path="managers" element={<AdminManagers />} />
               <Route path="payments" element={<AdminPayments />} />
               <Route path="settings" element={<AdminSettings />} />

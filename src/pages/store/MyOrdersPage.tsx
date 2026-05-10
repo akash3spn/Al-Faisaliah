@@ -311,10 +311,20 @@ export default function MyOrdersPage() {
                                             {order.paymentMethod === 'cod' ? 'Cash on Delivery' : order.paymentMethod}
                                         </Badge>
                                     </div>
-                                    <div className="flex justify-between items-center">
+                                    <div className="flex justify-between items-center text-sm">
+                                        <span className="text-muted-foreground">{language === 'ar' ? 'المجموع الفرعي' : 'Subtotal'}</span>
+                                        <span className="font-medium">SAR {Number(order.subtotal || order.total || 0).toFixed(2)}</span>
+                                    </div>
+                                    <div className="flex justify-between items-center text-sm">
                                         <span className="text-muted-foreground">{language === 'ar' ? 'رسوم التوصيل' : 'Delivery Charge'}</span>
                                         <span className="text-emerald-500 font-medium">{language === 'ar' ? 'مجاني' : 'Free'}</span>
                                     </div>
+                                    {order.discountAmount > 0 && (
+                                      <div className="flex justify-between items-center text-sm text-primary">
+                                          <span>{language === 'ar' ? 'الخصم' : 'Discount'} ({order.discountCode})</span>
+                                          <span className="font-medium">- SAR {Number(order.discountAmount).toFixed(2)}</span>
+                                      </div>
+                                    )}
                                     <div className="flex justify-between items-center pt-3 border-t border-white/5 text-base">
                                         <span className="font-bold">{language === 'ar' ? 'الإجمالي' : 'Total Amount'}</span>
                                         <span className="font-bold text-primary text-xl">SAR {Number(order.total || 0).toFixed(2)}</span>

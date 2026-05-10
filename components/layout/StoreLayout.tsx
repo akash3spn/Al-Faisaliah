@@ -94,6 +94,9 @@ export function StoreLayout() {
                     </DropdownMenuLabel>
                   </DropdownMenuGroup>
                   <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => navigate("/profile")} className="cursor-pointer">
+                    <UserCircle className="mr-2 h-4 w-4" /> {language === 'ar' ? 'الملف الشخصي' : 'Profile'}
+                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate("/my-orders")} className="cursor-pointer">
                     <Package className="mr-2 h-4 w-4" /> {t('nav.myOrders')}
                   </DropdownMenuItem>
@@ -139,7 +142,7 @@ export function StoreLayout() {
         <div className="flex flex-wrap flex-col sm:flex-row items-center justify-center gap-4 md:gap-6 mt-4 md:mt-0">
           <div className="flex gap-4">
             <Link to="/privacy-policy" className="hover:text-primary transition-colors">{language === 'ar' ? 'سياسة الخصوصية' : 'Privacy Policy'}</Link>
-            <a href="#" className="hover:text-primary transition-colors">{language === 'ar' ? 'الشروط والأحكام' : 'Terms of Service'}</a>
+            <Link to="/terms-of-service" className="hover:text-primary transition-colors">{language === 'ar' ? 'الشروط والأحكام' : 'Terms of Service'}</Link>
           </div>
           <div className="flex items-center gap-4">
             <Link to="/admin/login" className="text-primary/50 hover:text-primary border border-primary/20 hover:border-primary/50 px-2 py-1 flex items-center gap-1 transition-all rounded">

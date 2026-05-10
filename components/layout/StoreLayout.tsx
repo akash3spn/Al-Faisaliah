@@ -4,6 +4,7 @@ import { ShoppingCart, LogOut, Package, Search, Menu, UserCircle, Store } from "
 import { Link, Outlet, useNavigate } from "react-router-dom"
 import { useAuth } from "@/lib/firebase/AuthContext"
 import { useLanguage } from "@/lib/language-provider"
+import { useCart } from "@/lib/CartContext"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,6 +23,7 @@ export function StoreLayout() {
   const { user, isAdmin, loginWithGoogle, logout } = useAuth()
   const navigate = useNavigate()
   const { t, language } = useLanguage()
+  const { cartCount } = useCart()
 
   return (
     <div className={`flex min-h-screen flex-col ${language === 'ar' ? 'font-arabic' : 'font-sans'}`}>
@@ -64,9 +66,11 @@ export function StoreLayout() {
             <Link to="/cart">
               <Button variant="ghost" size="icon" className="relative text-white hover:text-primary">
                 <ShoppingCart className="h-5 w-5" />
-                <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 rounded-full bg-primary text-primary-foreground">
-                  3
-                </Badge>
+                {cartCount > 0 && (
+                  <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 rounded-full bg-primary text-black font-bold">
+                    {cartCount}
+                  </Badge>
+                )}
               </Button>
             </Link>
 

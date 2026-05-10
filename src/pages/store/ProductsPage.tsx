@@ -5,10 +5,12 @@ import { Star, Filter, ArrowDownUp } from "lucide-react"
 import { collection, query, getDocs } from "firebase/firestore"
 import { db } from "@/lib/firebase/client"
 import { Link } from "react-router-dom"
+import { useCart } from "@/lib/CartContext"
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const { addToCart } = useCart()
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -61,7 +63,10 @@ export default function ProductsPage() {
                     />
                     
                     <div className="absolute inset-x-0 bottom-0 p-4 translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 bg-gradient-to-t from-black/80 to-transparent">
-                      <Button className="w-full bg-primary text-primary-foreground hover:bg-white hover:text-black rounded-none">
+                      <Button 
+                        className="w-full bg-primary text-primary-foreground hover:bg-white hover:text-black rounded-none"
+                        onClick={() => addToCart(product)}
+                      >
                         Add to Cart
                       </Button>
                     </div>

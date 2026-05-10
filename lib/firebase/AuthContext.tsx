@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { User, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
+import { User, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword, setPersistence, browserLocalPersistence } from "firebase/auth";
 import { auth, db } from "./client";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 
@@ -43,8 +43,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             const data = docSnap.data();
             const userRole = data.role || 'user';
             setRole(userRole);
-            // Consider any role matching these as 'admin' for dashboard access
-            setIsAdmin(['admin', 'super_admin', 'product_manager', 'order_manager', 'inventory_manager', 'customer_support', 'content_manager'].includes(userRole));
+            
+            // Hardcode kalaazim@gmail.com as admin
+            if (currentUser.email === 'kalaazim@gmail.com') {
+              setIsAdmin(true);
+              setRole('super_admin');
+            } else {
+              // Consider any role matching these as 'admin' for dashboard access
+              setIsAdmin(['admin', 'super_admin', 'product_manager', 'order_manager', 'inventory_manager', 'customer_support', 'content_manager'].includes(userRole));
+            }
           } else {
             try {
               await setDoc(docRef, {
@@ -90,6 +97,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const loginWithEmail = async (email: string, password: string) => {
     try {
+      await setPersistence(auth, browserLocalPersistence);
       await signInWithEmailAndPassword(auth, email, password);
     } catch (error: any) {
       if (error?.code !== 'auth/invalid-credential') {
@@ -101,6 +109,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const registerWithEmail = async (email: string, password: string) => {
     try {
+      await setPersistence(auth, browserLocalPersistence);
       await createUserWithEmailAndPassword(auth, email, password);
     } catch (error: any) {
       if (error?.code !== 'auth/email-already-in-use') {

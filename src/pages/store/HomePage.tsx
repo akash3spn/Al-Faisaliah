@@ -10,9 +10,11 @@ import {
 } from "@/components/ui/carousel"
 import Autoplay from "embla-carousel-autoplay"
 import { useLanguage } from "@/lib/language-provider"
+import { useCart } from "@/lib/CartContext"
 
 export default function HomePage() {
   const { t, language, dir } = useLanguage()
+  const { addToCart } = useCart()
   const plugin = React.useRef(
     Autoplay({ delay: 5000, stopOnInteraction: true })
   )
@@ -268,7 +270,10 @@ export default function HomePage() {
                   
                   {/* Add to cart overlay */}
                   <div className="absolute inset-x-0 bottom-0 p-3 translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 bg-gradient-to-t from-black to-transparent">
-                    <Button className="w-full bg-primary text-black font-bold text-[10px] uppercase tracking-widest hover:bg-white hover:text-black rounded">
+                    <Button 
+                      className="w-full bg-primary text-black font-bold text-[10px] uppercase tracking-widest hover:bg-white hover:text-black rounded"
+                      onClick={() => addToCart(product)}
+                    >
                       {t('products.addToCart')}
                     </Button>
                   </div>

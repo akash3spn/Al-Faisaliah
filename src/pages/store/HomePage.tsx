@@ -53,8 +53,19 @@ export default function HomePage() {
         await navigator.clipboard.writeText(window.location.origin);
         toast.success(language === 'ar' ? 'تم نسخ الرابط بنجاح' : 'Link copied to clipboard!');
       }
-    } catch (error) {
+    } catch (error: any) {
+      if (error.name === 'AbortError') {
+        // User cancelled the share, do nothing
+        return;
+      }
       console.error('Error sharing:', error);
+      // Fallback to clipboard if sharing fails for other reasons
+      try {
+        await navigator.clipboard.writeText(window.location.origin);
+        toast.success(language === 'ar' ? 'تم نسخ الرابط بنجاح' : 'Link copied to clipboard!');
+      } catch (clipboardError) {
+        console.error('Clipboard fallback also failed:', clipboardError);
+      }
     }
   };
 

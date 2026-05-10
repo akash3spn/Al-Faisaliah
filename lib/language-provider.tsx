@@ -11,15 +11,15 @@ interface LanguageContextType {
 }
 
 const LanguageContext = createContext<LanguageContextType>({
-  language: 'ar',
+  language: 'en',
   setLanguage: () => {},
-  dir: 'rtl',
+  dir: 'ltr',
   t: (key) => key,
 });
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [language, setLanguageState] = useState<Language>(() => {
-    return (localStorage.getItem('alfaisaliah_lang') as Language) || 'ar';
+    return (localStorage.getItem('alfaisaliah_lang') as Language) || 'en';
   });
 
   const dir = language === 'ar' ? 'rtl' : 'ltr';

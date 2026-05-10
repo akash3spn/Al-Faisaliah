@@ -13,7 +13,9 @@ import CartPage from "./pages/store/CartPage"
 import CheckoutPage from "./pages/store/CheckoutPage"
 import LoginPage from "./pages/store/LoginPage"
 import RegisterPage from "./pages/store/RegisterPage"
+import ForgotPasswordPage from "./pages/store/ForgotPasswordPage"
 import MyOrdersPage from "./pages/store/MyOrdersPage"
+import PrivacyPolicyPage from "./pages/store/PrivacyPolicyPage"
 // import ProductDetailPage from "./pages/store/ProductDetailPage"
 
 // Admin Pages
@@ -40,6 +42,7 @@ export default function App() {
               {/* Common Auth Routes */}
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
+              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
               {/* Storefront Routes */}
               <Route element={<StoreLayout />}>
@@ -49,6 +52,7 @@ export default function App() {
                  <Route path="/cart" element={<CartPage />} />
                  <Route path="/checkout" element={<CheckoutPage />} />
                  <Route path="/my-orders" element={<MyOrdersPage />} />
+                 <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
                  {/* <Route path="/products/:id" element={<ProductDetailPage />} /> */}
               </Route>
 

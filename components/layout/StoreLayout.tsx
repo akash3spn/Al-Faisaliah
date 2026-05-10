@@ -34,7 +34,7 @@ export function StoreLayout() {
             <Button variant="ghost" size="icon" className="md:hidden text-white hover:text-primary" onClick={() => navigate("/")}>
               <Menu className="h-5 w-5" />
             </Button>
-            <Link to="/" className="flex items-center gap-4">
+            <a href="https://al-faisaliah.vercel.app/" className="flex items-center gap-4">
               <div className="w-10 h-10 bg-primary flex items-center justify-center rounded-sm rotate-45 shrink-0 hidden sm:flex">
                 <span className="-rotate-45 text-black font-black text-xl">F</span>
               </div>
@@ -46,7 +46,7 @@ export function StoreLayout() {
                   {language === 'ar' ? 'طريف، المملكة العربية السعودية' : 'Turaif City, Saudi Arabia'}
                 </p>
               </div>
-            </Link>
+            </a>
           </div>
 
           {/* Desktop Nav */}
@@ -138,7 +138,7 @@ export function StoreLayout() {
         </div>
         <div className="flex flex-wrap flex-col sm:flex-row items-center justify-center gap-4 md:gap-6 mt-4 md:mt-0">
           <div className="flex gap-4">
-            <a href="#" className="hover:text-primary transition-colors">{language === 'ar' ? 'سياسة الخصوصية' : 'Privacy Policy'}</a>
+            <Link to="/privacy-policy" className="hover:text-primary transition-colors">{language === 'ar' ? 'سياسة الخصوصية' : 'Privacy Policy'}</Link>
             <a href="#" className="hover:text-primary transition-colors">{language === 'ar' ? 'الشروط والأحكام' : 'Terms of Service'}</a>
           </div>
           <div className="flex items-center gap-4">

@@ -81,6 +81,12 @@ export default function LoginPage() {
               </div>
             </div>
 
+            <div className="flex items-center justify-end mb-6">
+              <Link to="/forgot-password" className="text-xs text-primary hover:text-primary/80 transition-colors uppercase tracking-wider font-medium">
+                {language === 'ar' ? 'نسيت كلمة المرور؟' : 'Forgot Password?'}
+              </Link>
+            </div>
+
             <Button
               type="submit"
               disabled={isLoading}

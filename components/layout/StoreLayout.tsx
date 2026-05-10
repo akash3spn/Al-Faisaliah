@@ -31,7 +31,7 @@ export function StoreLayout() {
         {/* Main Header */}
         <div className="container mx-auto flex h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" className="md:hidden text-white hover:text-primary">
+            <Button variant="ghost" size="icon" className="md:hidden text-white hover:text-primary" onClick={() => navigate("/")}>
               <Menu className="h-5 w-5" />
             </Button>
             <Link to="/" className="flex items-center gap-4">
@@ -89,7 +89,7 @@ export function StoreLayout() {
                     </DropdownMenuLabel>
                   </DropdownMenuGroup>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => navigate("/account/orders")} className="cursor-pointer">
+                  <DropdownMenuItem onClick={() => navigate("/my-orders")} className="cursor-pointer">
                     <Package className="mr-2 h-4 w-4" /> {t('nav.myOrders')}
                   </DropdownMenuItem>
                   {isAdmin && (
@@ -104,9 +104,11 @@ export function StoreLayout() {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Button onClick={loginWithGoogle} size="sm" variant="outline" className="hidden sm:flex font-bold rounded-full cursor-pointer text-[10px] tracking-wide border-primary/50 text-white hover:bg-primary hover:text-black hover:border-primary">
-                {t('nav.login')}
-              </Button>
+              <Link to="/login">
+                <Button size="sm" variant="outline" className="hidden sm:flex font-bold rounded-full cursor-pointer text-[10px] tracking-wide border-primary/50 text-white hover:bg-primary hover:text-black hover:border-primary">
+                  {t('nav.login')}
+                </Button>
+              </Link>
             )}
             
             <div className="hidden sm:flex items-center gap-4 border-l border-[#333] pl-4 rtl:pr-4 rtl:border-l-0 rtl:border-r">

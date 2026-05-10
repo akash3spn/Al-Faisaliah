@@ -12,9 +12,7 @@ export default function CartPage() {
   const navigate = useNavigate();
 
   const handleCheckout = () => {
-    toast.success(language === 'ar' ? 'تم استلام طلبك بنجاح' : 'Order placed successfully!');
-    clearCart();
-    navigate('/');
+    navigate('/checkout');
   };
 
   return (
@@ -49,7 +47,7 @@ export default function CartPage() {
                   
                   <div className="flex-grow text-center sm:text-left sm:rtl:text-right">
                     <h3 className="font-medium text-lg leading-tight">{item.title}</h3>
-                    <p className="text-primary font-bold mt-1">SAR {item.price.toFixed(2)}</p>
+                    <p className="text-primary font-bold mt-1">SAR {Number(item.price || 0).toFixed(2)}</p>
                   </div>
 
                   <div className="flex items-center gap-4">
@@ -88,7 +86,7 @@ export default function CartPage() {
                 <div className="space-y-4 mb-6">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">{language === 'ar' ? 'المجموع الفرعي' : 'Subtotal'}</span>
-                    <span className="font-medium">SAR {cartTotal.toFixed(2)}</span>
+                    <span className="font-medium">SAR {Number(cartTotal || 0).toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">{language === 'ar' ? 'الشحن' : 'Shipping'}</span>
@@ -96,7 +94,7 @@ export default function CartPage() {
                   </div>
                   <div className="border-t border-border pt-4 flex justify-between">
                     <span className="font-bold text-lg">{language === 'ar' ? 'الإجمالي' : 'Total'}</span>
-                    <span className="font-bold text-lg text-primary">SAR {cartTotal.toFixed(2)}</span>
+                    <span className="font-bold text-lg text-primary">SAR {Number(cartTotal || 0).toFixed(2)}</span>
                   </div>
                 </div>
 

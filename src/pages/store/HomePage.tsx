@@ -286,7 +286,7 @@ export default function HomePage() {
                       <Star key={i} className={`h-3 w-3 ${i < Math.floor(product.rating) ? 'fill-primary text-primary' : 'text-gray-600'}`} />
                     ))}
                   </div>
-                  <p className="text-primary font-bold text-sm mt-auto" dir="ltr">{product.price.toFixed(2)} {t('products.sar')}</p>
+                  <p className="text-primary font-bold text-sm mt-auto" dir="ltr">{Number(product.price || 0).toFixed(2)} {t('products.sar')}</p>
                 </div>
               </CardContent>
             </Card>

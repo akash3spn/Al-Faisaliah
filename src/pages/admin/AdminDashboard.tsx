@@ -51,7 +51,7 @@ export default function AdminDashboard() {
         const chartDataMap: Record<string, number> = {}
 
         const latestOrders: any[] = []
-        ordersSnap.forEach((doc, index) => {
+        ordersSnap.docs.forEach((doc, index) => {
           const data = doc.data()
           totalRevenue += (data.total || 0)
           
@@ -91,7 +91,7 @@ export default function AdminDashboard() {
   }, [])
 
   const statCards = [
-    { title: t('admin.totalRevenue'), value: `SAR ${stats.revenue.toFixed(2)}`, icon: DollarSign, trend: ``, trendUp: true },
+    { title: t('admin.totalRevenue'), value: `SAR ${Number(stats.revenue || 0).toFixed(2)}`, icon: DollarSign, trend: ``, trendUp: true },
     { title: t('admin.totalOrders'), value: stats.orders.toString(), icon: ShoppingCart, trend: ``, trendUp: true },
     { title: t('admin.activeProducts'), value: stats.products.toString(), icon: Package, trend: ``, trendUp: true },
     { title: t('admin.totalCustomers'), value: stats.customers.toString(), icon: Users, trend: ``, trendUp: true },
@@ -213,7 +213,7 @@ export default function AdminDashboard() {
                       </p>
                     </div>
                     <div className="rtl:mr-auto ltr:ml-auto font-medium text-sm" dir="ltr">
-                      +SAR {(order.total || 0).toFixed(2)}
+                      +SAR {Number(order.total || 0).toFixed(2)}
                     </div>
                   </div>
                 ))}

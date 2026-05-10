@@ -309,7 +309,7 @@ export default function AdminProducts() {
                         </div>
                       </td>
                       <td className="p-4 align-middle text-muted-foreground">{product.category}</td>
-                      <td className="p-4 align-middle rtl:text-left ltr:text-right font-medium" dir="ltr">SAR {product.price?.toFixed(2)}</td>
+                      <td className="p-4 align-middle rtl:text-left ltr:text-right font-medium" dir="ltr">SAR {Number(product.price || 0).toFixed(2)}</td>
                       <td className="p-4 align-middle rtl:text-left ltr:text-right">
                          <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${product.stock > 10 ? 'bg-green-100 text-green-800 dark:bg-green-800/20 dark:text-green-400' : 'bg-red-100 text-red-800 dark:bg-red-800/20 dark:text-red-400'}`}>
                            {product.stock}

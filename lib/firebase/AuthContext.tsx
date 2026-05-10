@@ -11,6 +11,7 @@ interface AuthContextType {
   loginWithGoogle: () => Promise<void>;
   loginWithEmail: (e: string, p: string) => Promise<void>;
   registerWithEmail: (e: string, p: string) => Promise<void>;
+  registerCustomer: (data: any) => Promise<any>;
   logout: () => Promise<void>;
 }
 
@@ -22,6 +23,7 @@ const AuthContext = createContext<AuthContextType>({
   loginWithGoogle: async () => {},
   loginWithEmail: async () => {},
   registerWithEmail: async () => {},
+  registerCustomer: async () => {},
   logout: async () => {},
 });
 
@@ -119,6 +121,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  const registerCustomer = async (data: { email: string; password: string; fullName: string; phone: string; country: string; city: string; profilePicUrl?: string }) => {
+    try {
+      await setPersistence(auth, browserLocalPersistence);
+      const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
+      
+      const docRef = doc(db, "users", userCredential.user.uid);
+      await setDoc(docRef, {
+        uid: userCredential.user.uid,
+        email: data.email,
+        fullName: data.fullName,
+        phone: data.phone,
+        country: data.country,
+        city: data.city,
+        profilePicUrl: data.profilePicUrl || "",
+        role: "customer",
+        createdAt: Date.now()
+      });
+      
+      return userCredential.user;
+    } catch (error: any) {
+      console.error("Error registering customer", error);
+      throw error;
+    }
+  };
+
   const logout = async () => {
     try {
       await signOut(auth);
@@ -128,7 +155,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAdmin, role, loading, loginWithGoogle, loginWithEmail, registerWithEmail, logout }}>
+    <AuthContext.Provider value={{ user, isAdmin, role, loading, loginWithGoogle, loginWithEmail, registerWithEmail, registerCustomer, logout }}>
       {children}
     </AuthContext.Provider>
   );

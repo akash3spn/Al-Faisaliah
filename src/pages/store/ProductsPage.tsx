@@ -81,7 +81,7 @@ export default function ProductsPage() {
                         <Star key={i} className={`h-4 w-4 ${i < (product.rating || 5) ? 'fill-primary text-primary' : 'text-gray-300'}`} />
                       ))}
                     </div>
-                    <p className="text-primary font-semibold text-lg pt-2 mt-auto">SAR {(product.price || 0).toFixed(2)}</p>
+                    <p className="text-primary font-semibold text-lg pt-2 mt-auto">SAR {Number(product.price || 0).toFixed(2)}</p>
                   </div>
                 </CardContent>
               </Card>

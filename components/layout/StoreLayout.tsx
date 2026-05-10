@@ -133,7 +133,7 @@ export function StoreLayout() {
 
       <footer className="bg-black border-t border-primary/20 flex flex-col md:flex-row items-center justify-between px-4 sm:px-8 py-6 text-[10px] tracking-widest text-gray-500 uppercase font-medium">
         <div className="flex flex-wrap justify-center gap-4 md:gap-6 mb-4 md:mb-0">
-          <span>{language === 'ar' ? 'شحن مجاني للطلبات فوق ٥٠٠ ر.س' : 'Free Shipping Over SAR 500'}</span>
+          <span>{language === 'ar' ? 'شحن مجاني للطلبات فوق ١٥٠٠ ر.س' : 'Free Shipping Over SAR 1500'}</span>
           <span className="text-primary hidden sm:inline">•</span>
           <span>{language === 'ar' ? 'دفع آمن' : 'Secure Checkout'}</span>
           <span className="text-primary hidden sm:inline">•</span>

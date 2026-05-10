@@ -58,10 +58,15 @@ export function StoreLayout() {
           </nav>
 
           <div className="flex items-center gap-2 sm:gap-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-            <div className="hidden md:flex bg-[#1a1a1a] px-3 py-2 rounded items-center gap-3 border border-[#333]">
-               <span className="text-primary/70">{t('nav.search')}</span>
-               <div className="w-4 h-4 border border-primary rounded-full"></div>
-            </div>
+            <form onSubmit={(e) => { e.preventDefault(); const formData = new FormData(e.currentTarget); const query = formData.get('search'); if (query) navigate(`/products?search=${query}`) }} className="hidden md:flex relative group">
+              <input 
+                name="search"
+                type="text" 
+                placeholder={language === 'ar' ? 'البحث...' : 'Search...'}
+                className="bg-[#1a1a1a] text-white text-xs border border-[#333] rounded px-10 py-2 focus:outline-none focus:border-primary transition-colors w-48 uppercase tracking-wider"
+              />
+              <Search className="h-4 w-4 text-primary/70 absolute ltr:left-3 rtl:right-3 top-1/2 -translate-y-1/2" />
+            </form>
 
             <Link to="/cart">
               <Button variant="ghost" size="icon" className="relative text-white hover:text-primary">

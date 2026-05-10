@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { ArrowRight, Star, ShoppingBag, ShieldCheck, Clock, MapPin, Search } from "lucide-react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { Card, CardContent } from "@/components/ui/card"
 import { toast } from "sonner"
 import {
@@ -16,6 +16,7 @@ import { useCart } from "@/lib/CartContext"
 export default function HomePage() {
   const { t, language, dir } = useLanguage()
   const { addToCart } = useCart()
+  const navigate = useNavigate()
   const plugin = React.useRef(
     Autoplay({ delay: 5000, stopOnInteraction: true })
   )
@@ -95,6 +96,19 @@ export default function HomePage() {
       {/* Main Content Layout (Bento Grid) */}
       <main className="flex-grow p-4 md:p-6 grid grid-cols-1 md:grid-cols-12 md:auto-rows-[160px] gap-4 max-w-[1600px] mx-auto w-full">
         
+        {/* Mobile Search Bar */}
+        <div className="md:hidden col-span-1 border border-primary/20 rounded-xl overflow-hidden relative mb-2">
+          <form onSubmit={(e) => { e.preventDefault(); const formData = new FormData(e.currentTarget); const query = formData.get('search'); if (query) navigate(`/products?search=${query}`) }} className="relative bg-[#111]">
+            <input 
+              name="search"
+              type="text" 
+              placeholder={language === 'ar' ? 'البحث عن منتجات...' : 'Search products...'}
+              className="bg-transparent text-white text-sm px-12 py-4 w-full focus:outline-none focus:bg-[#1a1a1a] transition-colors"
+            />
+            <Search className="h-5 w-5 text-primary/70 absolute ltr:left-4 rtl:right-4 top-1/2 -translate-y-1/2" />
+          </form>
+        </div>
+
         {/* Hero Section (Promotional Slider) */}
         <div className="md:col-span-6 md:row-span-4 bg-[#111] border border-primary/30 rounded-2xl relative overflow-hidden group min-h-[400px]">
           <Carousel
@@ -203,7 +217,10 @@ export default function HomePage() {
             <h4 className="text-3xl lg:text-4xl font-black">
                {language === 'ar' ? 'خصم حتى 60%' : 'UP TO 60% OFF'}
             </h4>
-            <Button className="mt-4 self-start bg-black text-primary hover:bg-white hover:text-black font-bold uppercase tracking-widest text-[10px] px-6 rounded-sm">
+            <Button 
+              className="mt-4 self-start bg-black text-primary hover:bg-white hover:text-black font-bold uppercase tracking-widest text-[10px] px-6 rounded-sm"
+              onClick={() => navigate('/products')}
+            >
                {language === 'ar' ? 'احصل على العرض' : 'Grab Deal'}
             </Button>
           </div>

@@ -4,12 +4,14 @@ import { Button } from "@/components/ui/button"
 import { Star, Filter, ArrowDownUp } from "lucide-react"
 import { collection, query, getDocs } from "firebase/firestore"
 import { db } from "@/lib/firebase/client"
-import { Link } from "react-router-dom"
+import { Link, useSearchParams } from "react-router-dom"
 import { useCart } from "@/lib/CartContext"
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [searchParams] = useSearchParams()
+  const searchQuery = searchParams.get('search') || ''
   const { addToCart } = useCart()
 
   useEffect(() => {
@@ -17,10 +19,18 @@ export default function ProductsPage() {
       try {
         const q = query(collection(db, "products"))
         const querySnapshot = await getDocs(q)
-        const items = querySnapshot.docs.map(doc => ({
+        let items = querySnapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data()
         }))
+        
+        if (searchQuery) {
+          items = items.filter(item => 
+            item.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            item.category?.toLowerCase().includes(searchQuery.toLowerCase())
+          )
+        }
+        
         setProducts(items)
       } catch (error) {
         console.error("Error fetching products", error)
@@ -29,7 +39,7 @@ export default function ProductsPage() {
       }
     }
     fetchProducts()
-  }, [])
+  }, [searchQuery])
 
   return (
     <div className="bg-background min-h-screen">

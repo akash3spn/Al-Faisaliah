@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "@/lib/firebase/AuthContext";
 import { useLanguage } from "@/lib/language-provider";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import { collection, query, where, onSnapshot } from "firebase/firestore";
 import { db } from "@/lib/firebase/client";
 import { Package, Clock, CheckCircle2, Truck, XCircle, ChevronDown, ChevronUp, MapPin, CreditCard } from "lucide-react";
@@ -29,6 +30,24 @@ export default function MyOrdersPage() {
     const q = query(collection(db, "orders"), where("userId", "==", user.uid));
     
     const unsubscribe = onSnapshot(q, (snapshot) => {
+      // Check for modified orders to show real-time notifications
+      snapshot.docChanges().forEach((change) => {
+        if (change.type === "modified") {
+          const newStatus = change.doc.data().status;
+          const orderId = change.doc.id.slice(-8).toUpperCase();
+          const isArabic = language === 'ar';
+          let statusLabel = newStatus;
+          switch (newStatus) {
+            case 'pending': statusLabel = isArabic ? 'قيد الانتظار' : 'Pending'; break;
+            case 'processing': statusLabel = isArabic ? 'قيد التجهيز' : 'Processing'; break;
+            case 'shipped': statusLabel = isArabic ? 'تم الشحن' : 'Shipped'; break;
+            case 'delivered': statusLabel = isArabic ? 'تم التوصيل' : 'Delivered'; break;
+            case 'cancelled': statusLabel = isArabic ? 'ملغي' : 'Cancelled'; break;
+          }
+          toast.success(isArabic ? `تم تحديث حالة الطلب #${orderId} إلى ${statusLabel}` : `Order #${orderId} status updated to ${statusLabel}`);
+        }
+      });
+
       const ordersData = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()

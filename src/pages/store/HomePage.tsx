@@ -29,18 +29,51 @@ export default function HomePage() {
   ]
 
   // Timer logic for flash sale
-  const [timeLeft, setTimeLeft] = useState({ hrs: 8, mins: 42, secs: 19 })
+  const [targetDate, setTargetDate] = useState(() => {
+    const saved = localStorage.getItem('flashSaleTargetDate')
+    if (saved) return new Date(saved)
+    const date = new Date()
+    date.setHours(date.getHours() + 8)
+    return date
+  })
+
+  const [timeLeft, setTimeLeft] = useState({ hrs: 0, mins: 0, secs: 0 })
+
   useEffect(() => {
+    const calculateTimeLeft = () => {
+      const now = new Date().getTime()
+      const distance = targetDate.getTime() - now
+
+      if (distance < 0) {
+        return { hrs: 0, mins: 0, secs: 0 }
+      }
+
+      return {
+        hrs: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)) + Math.floor(distance / (1000 * 60 * 60 * 24)) * 24,
+        mins: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
+        secs: Math.floor((distance % (1000 * 60)) / 1000)
+      }
+    }
+
+    setTimeLeft(calculateTimeLeft())
+
     const timer = setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev.secs > 0) return { ...prev, secs: prev.secs - 1 }
-        if (prev.mins > 0) return { ...prev, mins: prev.mins - 1, secs: 59 }
-        if (prev.hrs > 0) return { ...prev, hrs: prev.hrs - 1, mins: 59, secs: 59 }
-        return { hrs: 24, mins: 0, secs: 0 }
-      })
+      setTimeLeft(calculateTimeLeft())
     }, 1000)
     return () => clearInterval(timer)
-  }, [])
+  }, [targetDate])
+
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.value) return;
+    const newDate = new Date(e.target.value)
+    setTargetDate(newDate)
+    localStorage.setItem('flashSaleTargetDate', newDate.toISOString())
+  }
+
+  const toLocalISOString = (date: Date) => {
+    const tzoffset = date.getTimezoneOffset() * 60000;
+    return (new Date(date.getTime() - tzoffset)).toISOString().slice(0, 16);
+  }
 
   const handleShare = async () => {
     try {
@@ -211,31 +244,46 @@ export default function HomePage() {
         </Link>
 
         {/* Flash Sale Timer */}
-        <div className="md:col-span-6 md:row-span-2 bg-primary text-black rounded-2xl p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-6 min-h-[200px]">
-          <div className="flex flex-col">
-            <span className="text-xs font-black uppercase tracking-[0.3em] mb-1">{t('home.flashSale')}</span>
-            <h4 className="text-3xl lg:text-4xl font-black">
-               {language === 'ar' ? 'خصم حتى 60%' : 'UP TO 60% OFF'}
-            </h4>
-            <Button 
-              className="mt-4 self-start bg-black text-primary hover:bg-white hover:text-black font-bold uppercase tracking-widest text-[10px] px-6 rounded-sm"
-              onClick={() => navigate('/products')}
-            >
-               {language === 'ar' ? 'احصل على العرض' : 'Grab Deal'}
-            </Button>
+        <div className="md:col-span-6 md:row-span-2 relative group min-h-[200px]">
+          <div className="w-full h-full bg-[#D7B53A] text-black rounded-2xl p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+            <div className="flex flex-col">
+              <span className="text-xs font-black uppercase tracking-[0.3em] mb-1">{t('home.flashSale')}</span>
+              <h4 className="text-3xl lg:text-4xl font-black">
+                 {language === 'ar' ? 'خصم حتى 60%' : 'UP TO 60% OFF'}
+              </h4>
+              <Button 
+                className="mt-4 self-start bg-black text-[#D7B53A] hover:bg-white hover:text-black font-bold uppercase tracking-widest text-[10px] px-6 rounded-sm"
+                onClick={() => navigate('/products')}
+              >
+                 {language === 'ar' ? 'احصل على العرض' : 'Grab Deal'}
+              </Button>
+            </div>
+            <div className="flex gap-2 sm:gap-3" dir="ltr">
+              <div className="flex flex-col items-center bg-black/10 px-3 py-2 sm:px-4 sm:py-3 rounded-xl border border-black/10 min-w-[60px]">
+                <span className="text-2xl sm:text-4xl font-bold font-mono tracking-tighter">{timeLeft.hrs.toString().padStart(2, '0')}</span>
+                <span className="text-[10px] uppercase font-bold mt-1 tracking-wider">HRS</span>
+              </div>
+              <div className="flex flex-col items-center bg-black/10 px-3 py-2 sm:px-4 sm:py-3 rounded-xl border border-black/10 min-w-[60px]">
+                <span className="text-2xl sm:text-4xl font-bold font-mono tracking-tighter">{timeLeft.mins.toString().padStart(2, '0')}</span>
+                <span className="text-[10px] uppercase font-bold mt-1 tracking-wider">MIN</span>
+              </div>
+              <div className="flex flex-col items-center bg-black/10 px-3 py-2 sm:px-4 sm:py-3 rounded-xl border border-black/10 min-w-[60px]">
+                <span className="text-2xl sm:text-4xl font-bold font-mono tracking-tighter">{timeLeft.secs.toString().padStart(2, '0')}</span>
+                <span className="text-[10px] uppercase font-bold mt-1 tracking-wider">SEC</span>
+              </div>
+            </div>
           </div>
-          <div className="flex gap-2 sm:gap-3" dir="ltr">
-            <div className="flex flex-col items-center bg-black/10 px-3 py-2 sm:px-4 sm:py-3 rounded-lg border border-black/10 min-w-[60px]">
-              <span className="text-xl sm:text-3xl font-black">{timeLeft.hrs.toString().padStart(2, '0')}</span>
-              <span className="text-[9px] uppercase font-bold mt-1">HRS</span>
-            </div>
-            <div className="flex flex-col items-center bg-black/10 px-3 py-2 sm:px-4 sm:py-3 rounded-lg border border-black/10 min-w-[60px]">
-              <span className="text-xl sm:text-3xl font-black">{timeLeft.mins.toString().padStart(2, '0')}</span>
-              <span className="text-[9px] uppercase font-bold mt-1">MIN</span>
-            </div>
-            <div className="flex flex-col items-center bg-black/10 px-3 py-2 sm:px-4 sm:py-3 rounded-lg border border-black/10 min-w-[60px]">
-              <span className="text-xl sm:text-3xl font-black">{timeLeft.secs.toString().padStart(2, '0')}</span>
-              <span className="text-[9px] uppercase font-bold mt-1">SEC</span>
+          
+          {/* Admin Date Control visible on hover */}
+          <div className="absolute -bottom-8 left-0 w-full opacity-0 group-hover:opacity-100 transition-opacity flex justify-center z-20 pointer-events-none group-hover:pointer-events-auto">
+            <div className="bg-black/90 border border-white/20 px-3 py-2 rounded-lg flex items-center gap-2 shadow-xl backdrop-blur-md">
+              <span className="text-[10px] text-[#D7B53A] font-bold uppercase tracking-wider">Admin Ends:</span>
+              <input 
+                type="datetime-local" 
+                value={toLocalISOString(targetDate)} 
+                onChange={handleDateChange} 
+                className="bg-transparent text-white text-xs outline-none [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:invert cursor-pointer"
+              />
             </div>
           </div>
         </div>

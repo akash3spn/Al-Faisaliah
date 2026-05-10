@@ -15,6 +15,13 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Badge } from "@/components/ui/badge"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 export default function AdminOrders() {
   const { t, language } = useLanguage()
@@ -120,9 +127,21 @@ export default function AdminOrders() {
                       <td className="px-6 py-4">{new Date(order.createdAt).toLocaleDateString()}</td>
                       <td className="px-6 py-4 font-bold">SAR {Number(order.total || 0).toFixed(2)}</td>
                       <td className="px-6 py-4">
-                        <Badge variant="outline" className={`border-none ${getStatusColor(order.status)}`}>
-                          {order.status}
-                        </Badge>
+                        <Select 
+                          value={order.status} 
+                          onValueChange={(value) => handleUpdateStatus(order.id, value)}
+                        >
+                          <SelectTrigger className={`h-8 w-[120px] text-xs font-bold uppercase tracking-wider border-none ${getStatusColor(order.status)}`}>
+                            <SelectValue placeholder="Status" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="pending">PENDING</SelectItem>
+                            <SelectItem value="processing">PROCESSING</SelectItem>
+                            <SelectItem value="shipped">SHIPPED</SelectItem>
+                            <SelectItem value="delivered">DELIVERED</SelectItem>
+                            <SelectItem value="cancelled">CANCELLED</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </td>
                       <td className="px-6 py-4 text-center">
                         <Dialog>

@@ -27,6 +27,9 @@ export function StoreLayout() {
 
   return (
     <div className={`flex min-h-screen flex-col ${language === 'ar' ? 'font-arabic' : 'font-sans'}`}>
+      <div className="bg-primary px-4 py-1.5 text-center text-[10px] sm:text-xs font-bold uppercase tracking-widest text-black flex justify-center items-center">
+        {language === 'ar' ? 'شحن مجاني للطلبات فوق 1500 ريال سعودي' : 'Free Shipping Over SAR 1500'}
+      </div>
       <header className="sticky top-0 z-50 w-full bg-black border-b border-primary/20">
         {/* Main Header */}
         <div className="container mx-auto flex h-20 items-center justify-between px-4 sm:px-6 lg:px-8">

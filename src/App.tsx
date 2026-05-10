@@ -18,7 +18,7 @@ import ProfilePage from "./pages/store/ProfilePage"
 import MyOrdersPage from "./pages/store/MyOrdersPage"
 import PrivacyPolicyPage from "./pages/store/PrivacyPolicyPage"
 import TermsOfServicePage from "./pages/store/TermsOfServicePage"
-// import ProductDetailPage from "./pages/store/ProductDetailPage"
+import ProductDetailPage from "./pages/store/ProductDetailPage"
 
 // Admin Pages
 import AdminDashboard from "./pages/admin/AdminDashboard"
@@ -58,7 +58,7 @@ export default function App() {
                  <Route path="/my-orders" element={<MyOrdersPage />} />
                  <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
                  <Route path="/terms-of-service" element={<TermsOfServicePage />} />
-                 {/* <Route path="/products/:id" element={<ProductDetailPage />} /> */}
+                 <Route path="/product/:id" element={<ProductDetailPage />} />
               </Route>
 
             {/* Admin Routes */}

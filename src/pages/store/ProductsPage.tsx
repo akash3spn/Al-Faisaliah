@@ -63,7 +63,7 @@ export default function ProductsPage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
             {products.map((product) => (
-              <Card key={product.id} className="border-none bg-background rounded-none shadow-sm hover:shadow-xl transition-all duration-300 group">
+              <Card key={product.id} className="border-none bg-background rounded-none shadow-sm hover:shadow-xl transition-all duration-300 group cursor-pointer" onClick={() => window.location.href = `/product/${product.id}`}>
                 <CardContent className="p-0 relative">
                   <div className="overflow-hidden relative aspect-[4/5] bg-muted">
                     <img 
@@ -75,7 +75,7 @@ export default function ProductsPage() {
                     <div className="absolute inset-x-0 bottom-0 p-4 translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 bg-gradient-to-t from-black/80 to-transparent">
                       <Button 
                         className="w-full bg-primary text-primary-foreground hover:bg-white hover:text-black rounded-none"
-                        onClick={() => addToCart(product)}
+                        onClick={(e) => { e.stopPropagation(); addToCart(product); }}
                       >
                         Add to Cart
                       </Button>
@@ -83,9 +83,9 @@ export default function ProductsPage() {
                   </div>
                   <div className="p-6 text-center space-y-2">
                     <p className="text-xs uppercase tracking-wider text-muted-foreground">{product.category}</p>
-                    <Link to={`/products/${product.id}`} className="hover:text-primary transition-colors block">
+                    <div className="hover:text-primary transition-colors block">
                       <h3 className="font-serif font-medium text-lg leading-tight line-clamp-2">{product.title}</h3>
-                    </Link>
+                    </div>
                     <div className="flex justify-center items-center gap-1">
                       {Array.from({ length: 5 }).map((_, i) => (
                         <Star key={i} className={`h-4 w-4 ${i < (product.rating || 5) ? 'fill-primary text-primary' : 'text-gray-300'}`} />

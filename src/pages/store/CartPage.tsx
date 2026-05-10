@@ -46,7 +46,9 @@ export default function CartPage() {
                   </div>
                   
                   <div className="flex-grow text-center sm:text-left sm:rtl:text-right">
-                    <h3 className="font-medium text-lg leading-tight">{item.title}</h3>
+                    <Link to={`/product/${item.id}`} className="hover:text-primary transition-colors block">
+                      <h3 className="font-medium text-lg leading-tight">{item.title}</h3>
+                    </Link>
                     <p className="text-primary font-bold mt-1">SAR {Number(item.price || 0).toFixed(2)}</p>
                   </div>
 

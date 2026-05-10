@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { User, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword, setPersistence, browserLocalPersistence, sendPasswordResetEmail } from "firebase/auth";
 import { auth, db } from "./client";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 
 interface AuthContextType {
   user: User | null;
@@ -45,37 +45,108 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           
           if (docSnap.exists()) {
             const data = docSnap.data();
-            const userRole = data.role || 'user';
-            setRole(userRole);
+            let userRole = data.role || 'customer';
             
-            // Hardcode kalaazim@gmail.com as admin
+            // Hardcode kalaazim@gmail.com as super_admin
             if (currentUser.email === 'kalaazim@gmail.com') {
-              setIsAdmin(true);
-              setRole('super_admin');
-            } else {
-              // Consider any role matching these as 'admin' for dashboard access
-              setIsAdmin(['admin', 'super_admin', 'product_manager', 'order_manager', 'inventory_manager', 'customer_support', 'content_manager'].includes(userRole));
+              userRole = 'super_admin';
+              
+              // Seed super admin to admins collection if they are missing
+              const superAdminRef = doc(db, "admins", currentUser.email);
+              const saSnap = await getDoc(superAdminRef);
+              if (!saSnap.exists()) {
+                await setDoc(superAdminRef, {
+                  email: currentUser.email,
+                  uid: currentUser.uid,
+                  fullName: 'Super Admin',
+                  role: 'super_admin',
+                  status: 'active',
+                  createdAt: Date.now(),
+                  lastLogin: Date.now(),
+                  addedBy: 'system'
+                });
+              } else {
+                await updateDoc(superAdminRef, { lastLogin: Date.now(), uid: currentUser.uid });
+              }
+            } else if (userRole === 'customer') {
+              // check if it was authorized later
+              if (currentUser.email) {
+                const authAdminRef = doc(db, "admins", currentUser.email);
+                const authAdminSnap = await getDoc(authAdminRef);
+                if (authAdminSnap.exists()) {
+                  const adminData = authAdminSnap.data();
+                  if (adminData.status !== 'suspended') {
+                    userRole = adminData.role;
+                    // update user doc
+                    await updateDoc(docRef, { role: userRole });
+                    // update lastLogin and uid
+                    await updateDoc(authAdminRef, { lastLogin: Date.now(), uid: currentUser.uid });
+                  } else {
+                    userRole = 'customer'; // Suspended admins become customers on login
+                  }
+                }
+              }
             }
+            
+            setRole(userRole);
+            const adminRoles = ['admin', 'super_admin', 'product_manager', 'order_manager', 'inventory_manager', 'customer_support', 'content_manager'];
+            setIsAdmin(adminRoles.includes(userRole));
           } else {
             try {
+              const isAdminEmail = currentUser.email === 'kalaazim@gmail.com';
+              let finalRole = isAdminEmail ? 'super_admin' : 'customer';
+              
+              if (isAdminEmail) {
+                const superAdminRef = doc(db, "admins", currentUser.email);
+                const saSnap = await getDoc(superAdminRef);
+                if (!saSnap.exists()) {
+                  await setDoc(superAdminRef, {
+                    email: currentUser.email,
+                    uid: currentUser.uid,
+                    fullName: 'Super Admin',
+                    role: 'super_admin',
+                    status: 'active',
+                    createdAt: Date.now(),
+                    lastLogin: Date.now(),
+                    addedBy: 'system'
+                  });
+                } else {
+                  await updateDoc(superAdminRef, { lastLogin: Date.now(), uid: currentUser.uid });
+                }
+              }
+
+              if (currentUser.email && !isAdminEmail) {
+                const authAdminRef = doc(db, "admins", currentUser.email);
+                const authAdminSnap = await getDoc(authAdminRef);
+                if (authAdminSnap.exists()) {
+                  const adminData = authAdminSnap.data();
+                  if (adminData.status !== 'suspended') {
+                    finalRole = adminData.role;
+                    await updateDoc(authAdminRef, { lastLogin: Date.now(), uid: currentUser.uid });
+                  }
+                }
+              }
+
               await setDoc(docRef, {
                 uid: currentUser.uid,
                 email: currentUser.email || '',
-                role: 'super_admin', 
+                role: finalRole, 
                 createdAt: Date.now()
               });
-              setIsAdmin(true);
-              setRole('super_admin');
+              
+              setRole(finalRole);
+              const adminRoles = ['admin', 'super_admin', 'product_manager', 'order_manager', 'inventory_manager', 'customer_support', 'content_manager'];
+              setIsAdmin(adminRoles.includes(finalRole));
             } catch (e) {
               console.error("Error creating user doc", e);
-              setIsAdmin(true); 
-              setRole('super_admin'); 
+              setIsAdmin(false); 
+              setRole('customer'); 
             }
           }
         } catch(e) {
           console.error("Failed to check admin status", e);
-          setIsAdmin(true); 
-          setRole('super_admin');
+          setIsAdmin(false); 
+          setRole('customer');
         }
       } else {
         setIsAdmin(false);

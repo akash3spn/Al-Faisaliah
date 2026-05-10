@@ -11,7 +11,7 @@ import { toast } from 'sonner'
 import { motion } from 'framer-motion'
 
 export default function AdminLogin() {
-  const { loginWithGoogle, loginWithEmail, registerWithEmail, user, isAdmin, loading } = useAuth()
+  const { loginWithGoogle, loginWithEmail, registerWithEmail, user, isAdmin, loading, logout } = useAuth()
   const navigate = useNavigate()
   const { t, language } = useLanguage()
   const [email, setEmail] = useState('')
@@ -19,6 +19,13 @@ export default function AdminLogin() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [loginMethod, setLoginMethod] = useState<'email' | 'phone' | 'google'>('email')
   const [isSignUp, setIsSignUp] = useState(false)
+
+  React.useEffect(() => {
+    if (user && !isAdmin && !loading) {
+      toast.error(language === 'ar' ? 'تم الرفض. لست مسؤولاً مصرحاً له.' : 'Access Denied. You are not an authorized administrator.')
+      logout()
+    }
+  }, [user, isAdmin, loading, logout, language])
 
   if (loading) return <div className="h-screen flex items-center justify-center">Loading...</div>
   

@@ -360,7 +360,7 @@ export default function HomePage() {
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {featuredProducts.map((product) => (
-            <Card key={product.id} className="border border-white/5 bg-[#0a0a0a] rounded-xl overflow-hidden hover:border-primary/50 transition-all duration-300 group">
+            <Card key={product.id} className="border border-white/5 bg-[#0a0a0a] rounded-xl overflow-hidden hover:border-primary/50 transition-all duration-300 group cursor-pointer" onClick={() => window.location.href = `/product/${product.id}`}>
               <CardContent className="p-0 relative flex flex-col h-full">
                 <div className="relative aspect-square bg-[#111] overflow-hidden">
                   <img src={product.image} alt={product.title} className="w-full h-full object-cover opacity-80 transition-transform duration-700 group-hover:scale-110 group-hover:opacity-100" />
@@ -369,7 +369,7 @@ export default function HomePage() {
                   <div className="absolute inset-x-0 bottom-0 p-3 translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 bg-gradient-to-t from-black to-transparent">
                     <Button 
                       className="w-full bg-primary text-black font-bold text-[10px] uppercase tracking-widest hover:bg-white hover:text-black rounded"
-                      onClick={() => addToCart(product)}
+                      onClick={(e) => { e.stopPropagation(); addToCart(product); }}
                     >
                       {t('products.addToCart')}
                     </Button>

@@ -13,12 +13,18 @@ service cloud.firestore {
     function incoming() { return request.resource.data; }
     function existing() { return resource.data; }
     function isAdmin() { 
-      return isSignedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
-      get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'super_admin', 'product_manager', 'order_manager', 'inventory_manager', 'customer_support', 'content_manager']; 
+      return isSignedIn() && (
+        request.auth.token.email == 'kalaazim@gmail.com' ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'super_admin', 'product_manager', 'order_manager', 'inventory_manager', 'customer_support', 'content_manager'])
+      ); 
     }
     function isSuperAdmin() {
-      return isSignedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
-      get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'super_admin'];
+      return isSignedIn() && (
+        request.auth.token.email == 'kalaazim@gmail.com' ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['super_admin'])
+      );
     }
 
     // Validation Helpers
@@ -120,6 +126,11 @@ service cloud.firestore {
         && incoming().active is bool;
       allow update: if isAdmin();
       allow delete: if isAdmin();
+    }
+    match /admins/{emailId} {
+      allow read: if isSignedIn() && (request.auth.token.email == emailId || isSuperAdmin() || isAdmin());
+      allow list: if isSuperAdmin() || isAdmin();
+      allow create, update, delete: if isSuperAdmin();
     }
   }
 }

@@ -136,16 +136,16 @@
   },
   "scope_extensions": [
     {
-      "origin": "al-faisaliah.vercel.app"
+      "origin": "https://al-faisaliah.vercel.app"
     },
     {
-      "origin": "*.vercel.app"
+      "origin": "https://*.vercel.app"
     },
     {
-      "origin": "*.web.app"
+      "origin": "https://*.web.app"
     },
     {
-      "origin": "*.firebaseapp.com"
+      "origin": "https://*.firebaseapp.com"
     }
   ],
   "widgets": [

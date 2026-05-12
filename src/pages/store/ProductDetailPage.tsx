@@ -16,7 +16,8 @@ import {
   Truck, 
   ShieldCheck, 
   ArrowLeft,
-  ZoomIn
+  ZoomIn,
+  X
 } from "lucide-react"
 import { toast } from "sonner"
 import { motion, AnimatePresence } from "framer-motion"
@@ -32,6 +33,7 @@ export default function ProductDetailPage() {
   const [relatedProducts, setRelatedProducts] = useState<any[]>([])
   const [activeImageIndex, setActiveImageIndex] = useState(0)
   const [isZoomed, setIsZoomed] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
 
   useEffect(() => {
@@ -222,7 +224,8 @@ export default function ProductDetailPage() {
             )}
             
             <div 
-              className="absolute inset-0 cursor-crosshair overflow-hidden"
+              className="absolute inset-0 cursor-zoom-in overflow-hidden"
+              onClick={() => setIsModalOpen(true)}
               onMouseEnter={() => setIsZoomed(true)}
               onMouseLeave={() => {
                 setIsZoomed(false)
@@ -251,7 +254,11 @@ export default function ProductDetailPage() {
             <Button 
               variant="secondary" 
               size="icon" 
-              className="absolute bottom-4 right-4 rounded-full opacity-0 group-hover:opacity-100 transition-opacity bg-background/80 backdrop-blur-sm pointer-events-none"
+              className="absolute bottom-4 right-4 rounded-full opacity-0 group-hover:opacity-100 transition-opacity bg-background/80 backdrop-blur-sm z-10"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsModalOpen(true);
+              }}
             >
               <ZoomIn className="h-5 w-5" />
             </Button>
@@ -437,6 +444,63 @@ export default function ProductDetailPage() {
           </div>
         </div>
       )}
+
+      {/* Zoom Modal */}
+      <AnimatePresence>
+        {isModalOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-background/95 backdrop-blur-sm p-4 sm:p-8"
+            onClick={() => setIsModalOpen(false)}
+          >
+            <Button 
+              variant="outline" 
+              size="icon" 
+              className="absolute top-4 right-4 rounded-full z-50 bg-background/50 hover:bg-background/80 backdrop-blur-sm border-white/20"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsModalOpen(false);
+              }}
+            >
+              <X className="h-5 w-5" />
+            </Button>
+            
+            <motion.div 
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="relative w-full h-full max-w-5xl max-h-[90vh] flex items-center justify-center cursor-default"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <img 
+                src={images[activeImageIndex]} 
+                alt={product.title} 
+                className="w-full h-full object-contain"
+              />
+              
+              {/* Optional: Add navigation inside modal if there are multiple images */}
+              {images.length > 1 && (
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 p-2 rounded-full bg-background/80 backdrop-blur-sm border border-border/50">
+                  {images.map((img: string, idx: number) => (
+                    <button 
+                      key={idx}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setActiveImageIndex(idx);
+                      }}
+                      className={`w-2 h-2 rounded-full transition-all ${idx === activeImageIndex ? 'bg-primary w-4' : 'bg-primary/30 hover:bg-primary/50'}`}
+                      aria-label={`Go to image ${idx + 1}`}
+                    />
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

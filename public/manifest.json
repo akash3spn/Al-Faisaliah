@@ -7,10 +7,10 @@
   "id": "/",
   "display": "standalone",
   "display_override": [
+    "tabbed",
     "window-controls-overlay",
     "standalone",
-    "minimal-ui",
-    "tabbed"
+    "minimal-ui"
   ],
   "theme_color": "#d4af37",
   "background_color": "#0a0a0a",
@@ -136,7 +136,16 @@
   },
   "scope_extensions": [
     {
+      "origin": "al-faisaliah.vercel.app"
+    },
+    {
       "origin": "*.vercel.app"
+    },
+    {
+      "origin": "*.web.app"
+    },
+    {
+      "origin": "*.firebaseapp.com"
     }
   ],
   "widgets": [

@@ -9,7 +9,8 @@
   "display_override": [
     "window-controls-overlay",
     "standalone",
-    "minimal-ui"
+    "minimal-ui",
+    "tabbed"
   ],
   "theme_color": "#d4af37",
   "background_color": "#0a0a0a",
@@ -132,5 +133,37 @@
   },
   "note_taking": {
     "new_note_url": "/admin"
-  }
+  },
+  "scope_extensions": [
+    {
+      "origin": "*.vercel.app"
+    }
+  ],
+  "widgets": [
+    {
+      "name": "Featured Products",
+      "short_name": "Featured",
+      "description": "View today's top luxury products",
+      "tag": "featured",
+      "template": "/widget.json",
+      "ms_ac_template": "/widget.json",
+      "data": "/widget-data.json",
+      "type": "application/json",
+      "auth": false,
+      "update": 86400,
+      "icons": [
+        {
+          "src": "https://placehold.co/192x192/0a0a0a/d4af37.png?text=Wi",
+          "sizes": "192x192"
+        }
+      ],
+      "screenshots": [
+        {
+          "src": "https://placehold.co/192x192/0a0a0a/d4af37.png?text=Wi",
+          "sizes": "192x192",
+          "label": "Featured Products Widget"
+        }
+      ]
+    }
+  ]
 }

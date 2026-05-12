@@ -1,20 +1,21 @@
 {
   "name": "Al-Faisaliah Store",
   "short_name": "Al-Faisaliah",
-  "description": "Premium electronics, smart home devices, and luxury accessories.",
-  "lang": "en",
-  "dir": "ltr",
+  "description": "Premium electronics, smart home devices, luxury accessories, and baby toys.",
   "start_url": "/",
   "id": "/",
   "display": "standalone",
   "display_override": [
     "window-controls-overlay",
     "standalone",
-    "minimal-ui"
+    "minimal-ui",
+    "tabbed"
   ],
-  "orientation": "portrait",
-  "background_color": "#0a0a0a",
   "theme_color": "#d4af37",
+  "background_color": "#0a0a0a",
+  "orientation": "portrait-primary",
+  "dir": "ltr",
+  "lang": "en",
   "categories": [
     "shopping",
     "electronics",
@@ -45,27 +46,119 @@
       "src": "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?q=80&w=720&h=1280&auto=format&fit=crop",
       "sizes": "720x1280",
       "type": "image/jpeg",
-      "form_factor": "narrow"
+      "form_factor": "narrow",
+      "label": "Homepage and Promotions"
     },
     {
       "src": "https://images.unsplash.com/photo-1607082349566-187342175e2f?q=80&w=720&h=1280&auto=format&fit=crop",
       "sizes": "720x1280",
       "type": "image/jpeg",
-      "form_factor": "narrow"
+      "form_factor": "narrow",
+      "label": "Products and Categories"
     },
     {
       "src": "https://images.unsplash.com/photo-1620714223084-8fcacc6dfd8d?q=80&w=1280&h=720&auto=format&fit=crop",
       "sizes": "1280x720",
       "type": "image/jpeg",
-      "form_factor": "wide"
+      "form_factor": "wide",
+      "label": "Store Dashboard and Management"
     }
   ],
+  "shortcuts": [
+    {
+      "name": "View Products",
+      "short_name": "Products",
+      "description": "Browse our premium products",
+      "url": "/products",
+      "icons": [
+        {
+          "src": "https://placehold.co/192x192/0a0a0a/d4af37.png?text=Pr",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Shopping Cart",
+      "short_name": "Cart",
+      "description": "View your shopping cart",
+      "url": "/cart",
+      "icons": [
+        {
+          "src": "https://placehold.co/192x192/0a0a0a/d4af37.png?text=Ca",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
   "related_applications": [
     {
       "platform": "webapp",
-      "url": "/manifest.json"
+      "url": "https://al-faisaliah.vercel.app/manifest.json"
     }
   ],
   "prefer_related_applications": false,
-  "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7"
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
+  "file_handlers": [
+    {
+      "action": "/",
+      "accept": {
+        "image/jpeg": [".jpg", ".jpeg"],
+        "image/png": [".png"]
+      }
+    }
+  ],
+  "protocol_handlers": [
+    {
+      "protocol": "web+alfaisaliah",
+      "url": "/?nav=%s"
+    }
+  ],
+  "share_target": {
+    "action": "/search",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "note_taking": {
+    "new_note_url": "/admin"
+  },
+  "scope_extensions": [
+    {
+      "origin": "*.vercel.app"
+    }
+  ],
+  "widgets": [
+    {
+      "name": "Featured Products",
+      "description": "View today's top luxury products",
+      "tag": "featured",
+      "ms_ac_template": "https://al-faisaliah.vercel.app/widget.json",
+      "data": "https://al-faisaliah.vercel.app/widget-data.json",
+      "type": "application/json",
+      "screenshots": [
+        {
+          "src": "https://placehold.co/192x192/0a0a0a/d4af37.png?text=Wi",
+          "sizes": "192x192",
+          "label": "Featured Products Widget"
+        }
+      ],
+      "icons": [
+        {
+          "src": "https://placehold.co/192x192/0a0a0a/d4af37.png?text=Wi",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
 }

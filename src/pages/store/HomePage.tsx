@@ -12,6 +12,8 @@ import {
 import Autoplay from "embla-carousel-autoplay"
 import { useLanguage } from "@/lib/language-provider"
 import { useCart } from "@/lib/CartContext"
+import { collection, query, where, onSnapshot } from "firebase/firestore"
+import { db } from "@/lib/firebase/client"
 
 export default function HomePage() {
   const { t, language, dir } = useLanguage()
@@ -21,12 +23,27 @@ export default function HomePage() {
     Autoplay({ delay: 5000, stopOnInteraction: true })
   )
 
-  const featuredProducts = [
-    { id: "1", title: language === 'ar' ? "مكبر صوت بلوتوث فاخر" : "Premium Bluetooth Speaker", price: 299.99, image: "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?q=80&w=400&auto=format&fit=crop", category: "Audio", rating: 4.8 },
-    { id: "2", title: language === 'ar' ? "منصة منزل ذكي ذكية" : "Smart Home Hub Max", price: 499.00, image: "https://images.unsplash.com/photo-1558089687-f282ffcbc126?q=80&w=400&auto=format&fit=crop", category: "Smart Home", rating: 4.9 },
-    { id: "3", title: language === 'ar' ? "ساعة ذهبية فاخرة" : "Luxury Golden Watch", price: 899.50, image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=400&auto=format&fit=crop", category: "Accessories", rating: 5.0 },
-    { id: "4", title: language === 'ar' ? "سماعات عازلة للضوضاء" : "Wireless Noise-cancelling Headphones", price: 349.00, image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=400&auto=format&fit=crop", category: "Audio", rating: 4.7 },
-  ]
+  const [trendingProducts, setTrendingProducts] = useState<any[]>([])
+  const [loadingTrending, setLoadingTrending] = useState(true)
+
+  useEffect(() => {
+    const q = query(collection(db, "products"), where("isTrending", "==", true))
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const products = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }))
+      // Sort by createdAt desc in JS to avoid index requirements
+      products.sort((a: any, b: any) => (b.createdAt || 0) - (a.createdAt || 0))
+      setTrendingProducts(products)
+      setLoadingTrending(false)
+    }, (error) => {
+      console.error("Error fetching trending products:", error)
+      setLoadingTrending(false)
+    })
+
+    return () => unsubscribe()
+  }, [])
 
   // Timer logic for flash sale
   const [targetDate, setTargetDate] = useState(() => {
@@ -359,35 +376,59 @@ export default function HomePage() {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {featuredProducts.map((product) => (
-            <Card key={product.id} className="border border-white/5 bg-[#0a0a0a] rounded-xl overflow-hidden hover:border-primary/50 transition-all duration-300 group cursor-pointer" onClick={() => window.location.href = `/product/${product.id}`}>
-              <CardContent className="p-0 relative flex flex-col h-full">
-                <div className="relative aspect-square bg-[#111] overflow-hidden">
-                  <img src={product.image} alt={product.title} className="w-full h-full object-cover opacity-80 transition-transform duration-700 group-hover:scale-110 group-hover:opacity-100" />
-                  
-                  {/* Add to cart overlay */}
-                  <div className="absolute inset-x-0 bottom-0 p-3 translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 bg-gradient-to-t from-black to-transparent">
-                    <Button 
-                      className="w-full bg-primary text-black font-bold text-[10px] uppercase tracking-widest hover:bg-white hover:text-black rounded"
-                      onClick={(e) => { e.stopPropagation(); addToCart(product); }}
-                    >
-                      {t('products.addToCart')}
-                    </Button>
-                  </div>
+          {loadingTrending ? (
+            Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="rounded-xl overflow-hidden animate-pulse border border-white/5 bg-[#0a0a0a]">
+                <div className="aspect-square bg-white/10 w-full" />
+                <div className="p-4 space-y-3">
+                  <div className="h-2 bg-white/10 rounded w-1/3" />
+                  <div className="h-4 bg-white/10 rounded w-3/4" />
+                  <div className="h-3 bg-white/10 rounded w-1/2" />
                 </div>
-                <div className="p-4 flex flex-col flex-grow">
-                  <p className="text-[9px] uppercase tracking-[0.2em] text-gray-500 mb-1">{t(`categories.${product.category.toLowerCase().replace(' ', '')}`)}</p>
-                  <h3 className="font-medium text-sm leading-tight text-white mb-2 line-clamp-2">{product.title}</h3>
-                  <div className={`flex items-center gap-1 mb-3 ${language === 'ar' ? 'flex-row-reverse justify-end' : ''}`}>
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star key={i} className={`h-3 w-3 ${i < Math.floor(product.rating) ? 'fill-primary text-primary' : 'text-gray-600'}`} />
-                    ))}
+              </div>
+            ))
+          ) : trendingProducts.length === 0 ? (
+            <div className="col-span-full py-12 text-center text-muted-foreground border border-white/5 rounded-xl bg-[#0a0a0a]">
+              {language === 'ar' ? 'لا توجد منتجات رائجة حالياً.' : 'No trending products currently.'}
+            </div>
+          ) : (
+            trendingProducts.map((product) => {
+              const displayImage = (product.images && product.images.length > 0) ? product.images[0] : product.image;
+              const displayTitle = language === 'ar' && product.titleAr ? product.titleAr : product.title;
+              return (
+              <Card key={product.id} className="border border-white/5 bg-[#0a0a0a] rounded-xl overflow-hidden hover:border-primary/50 transition-all duration-300 group cursor-pointer" onClick={() => window.location.href = `/product/${product.id}`}>
+                <CardContent className="p-0 relative flex flex-col h-full">
+                  <div className="relative aspect-square bg-[#111] overflow-hidden flex items-center justify-center">
+                    {displayImage ? (
+                      <img src={displayImage} alt={displayTitle} className="w-full h-full object-cover opacity-80 transition-transform duration-700 group-hover:scale-110 group-hover:opacity-100" />
+                    ) : (
+                      <ShoppingBag className="w-12 h-12 text-white/20" />
+                    )}
+                    
+                    {/* Add to cart overlay */}
+                    <div className="absolute inset-x-0 bottom-0 p-3 translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 bg-gradient-to-t from-black to-transparent">
+                      <Button 
+                        className="w-full bg-primary text-black font-bold text-[10px] uppercase tracking-widest hover:bg-white hover:text-black rounded"
+                        onClick={(e) => { e.stopPropagation(); addToCart({ ...product, image: displayImage, title: displayTitle }); }}
+                      >
+                        {t('products.addToCart')}
+                      </Button>
+                    </div>
                   </div>
-                  <p className="text-primary font-bold text-sm mt-auto" dir="ltr">{Number(product.price || 0).toFixed(2)} {t('products.sar')}</p>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                  <div className="p-4 flex flex-col flex-grow">
+                    <p className="text-[9px] uppercase tracking-[0.2em] text-gray-500 mb-1">{product.category ? t(`categories.${product.category.toLowerCase().replace(' ', '')}`) : ''}</p>
+                    <h3 className="font-medium text-sm leading-tight text-white mb-2 line-clamp-2">{displayTitle}</h3>
+                    <div className={`flex items-center gap-1 mb-3 ${language === 'ar' ? 'flex-row-reverse justify-end' : ''}`}>
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star key={i} className={`h-3 w-3 ${i < Math.floor(product.rating || 5) ? 'fill-primary text-primary' : 'text-gray-600'}`} />
+                      ))}
+                    </div>
+                    <p className="text-primary font-bold text-sm mt-auto" dir="ltr">{Number(product.price || 0).toFixed(2)} {t('products.sar')}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            )})
+          )}
         </div>
       </section>
     </div>

@@ -2,18 +2,18 @@
   "name": "Al-Faisaliah Store",
   "short_name": "Al-Faisaliah",
   "description": "Premium electronics, smart home devices, luxury accessories, and baby toys.",
+  "scope": "/",
   "start_url": "/",
   "id": "/",
   "display": "standalone",
   "display_override": [
     "window-controls-overlay",
     "standalone",
-    "minimal-ui",
-    "tabbed"
+    "minimal-ui"
   ],
   "theme_color": "#d4af37",
   "background_color": "#0a0a0a",
-  "orientation": "portrait-primary",
+  "orientation": "portrait",
   "dir": "ltr",
   "lang": "en",
   "categories": [
@@ -132,33 +132,5 @@
   },
   "note_taking": {
     "new_note_url": "/admin"
-  },
-  "scope_extensions": [
-    {
-      "origin": "*.vercel.app"
-    }
-  ],
-  "widgets": [
-    {
-      "name": "Featured Products",
-      "description": "View today's top luxury products",
-      "tag": "featured",
-      "ms_ac_template": "https://al-faisaliah.vercel.app/widget.json",
-      "data": "https://al-faisaliah.vercel.app/widget-data.json",
-      "type": "application/json",
-      "screenshots": [
-        {
-          "src": "https://placehold.co/192x192/0a0a0a/d4af37.png?text=Wi",
-          "sizes": "192x192",
-          "label": "Featured Products Widget"
-        }
-      ],
-      "icons": [
-        {
-          "src": "https://placehold.co/192x192/0a0a0a/d4af37.png?text=Wi",
-          "sizes": "192x192"
-        }
-      ]
-    }
-  ]
+  }
 }
